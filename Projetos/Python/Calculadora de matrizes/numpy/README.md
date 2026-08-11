@@ -961,8 +961,6 @@ O objetivo original de portar para NumPy era ganhar velocidade. O benchmark most
 
 **Causa:** `dtype=object` desliga a vetorização em C. O array vira um vetor de ponteiros e cada operação chama `Fraction.__mul__` no interpretador.
 
-**Decisão:** manter esta versão como comparativo e estudo da API, e promover a versão sem dependências a principal.
-
 ---
 
 ## Autor
