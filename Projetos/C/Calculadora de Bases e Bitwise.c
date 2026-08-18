@@ -1,140 +1,133 @@
 #include <stdio.h>
-#include <ctype.h> 
+#include <stdbool.h>
+#include <string.h>
 #include <stdlib.h>
-#include <limits.h>
+#include <ctype.h>
 
-
-// Protótipos das funções
+void menu_modo(void);
 void troca_base(void);
 void op_bitwise(void);
-void menu_modo(void);
-unsigned long long int ler_e_limpar_input(int base_ou_op);
-void transforma_em_binario(unsigned long long int numero);
 
+void opcao_acessar_modo(void (*hud)(void), unsigned int* opcao, int tamanho_array, const int opcao_menu[]);
 
-int main(void) {
-    int op;
-    int base_ou_op;
+int main(){
+    const int opcoes_menu_principal[] = {0, 1, 2};
+    const int opcoes_troca_base[] = {2, 8, 10, 16, 32};
+    const int opcoes_bitwise[] = {1, 2, 3, 4, 5, 6};
 
-    while(1) {
-        menu_modo();
-        printf("Escolha a opcao: ");
-        if (scanf("%d", &op) != 1) {
-            while (getchar() != '\n');
-            continue;
-        }
-        
-        switch(op) {
-            case 1:
-                troca_base();
-                printf("Digite a base desejada\n>> ");
-                scanf("%d", &base_ou_op);
+    unsigned int opcao_principal = 0;
+    unsigned int opcao_sub = 0;
 
-                transforma_em_binario(ler_e_limpar_input(base_ou_op));
-                break; 
-                
-            case 2:
-                op_bitwise();
-                printf("Digite a operacao desejada: ");
-                scanf("%d", &base_ou_op);
-                
-                transforma_em_binario(ler_e_limpar_input(base_ou_op));
-                break; 
+    opcao_acessar_modo(menu_modo, &opcao_principal, sizeof(opcoes_menu_principal) / sizeof(opcoes_menu_principal[0]), opcoes_menu_principal);
 
-            case 0:
-                printf("Encerrando sistema\n");
-                return 0; 
-                
-            default:
-                printf("Digite uma opcao valida!\n\n");
-                break; 
-        }
+    switch (opcao_principal) {
+        case 1:
+            opcao_acessar_modo(troca_base, &opcao_sub, sizeof(opcoes_troca_base) / sizeof(opcoes_troca_base[0]), opcoes_troca_base);
+            printf("Voce selecionou a base: %u\n", opcao_sub);
+            break;
+
+        case 2:
+            opcao_acessar_modo(op_bitwise, &opcao_sub, sizeof(opcoes_bitwise) / sizeof(opcoes_bitwise[0]), opcoes_bitwise);
+            printf("Voce selecionou a operacao bitwise: %u\n", opcao_sub);
+            break;
+
+        case 0:
+            printf("Saindo do programa...\n");
+            break;
+
+        default:
+            printf("Opcao invalida.\n");
+            break;
     }
+    return 0;
+}
+
+void opcao_acessar_modo(void (*hud)(void), unsigned int* opcao, int tamanho_array, const int opcao_menu[]){
+    char buffer[100];
+    char buffer_limpo[100];
+    int numero;
+    bool numero_tem;
+    bool fim = false;
+
+    do {
+        if (hud != NULL) {
+            hud();
+        }
+        printf("Escolha uma opcao: ");
+
+        numero_tem = false;
+        unsigned int j = 0;
+
+        if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+            buffer[strcspn(buffer, "\n")] = '\0';
+
+            if (buffer[0] == '\0') {
+                printf("\nEntrada vazia! Tente novamente.\n\n");
+                continue;
+            }
+
+            for (unsigned int i = 0; buffer[i] != '\0'; i++) {
+                if (isdigit((unsigned char)buffer[i])) {
+                    buffer_limpo[j++] = buffer[i];
+                }
+            }
+            buffer_limpo[j] = '\0';
+
+            if (buffer_limpo[0] == '\0') {
+                printf("\nNenhum digito valido encontrado! Tente novamente.\n\n");
+                continue;
+            }
+
+            numero = (int)strtol(buffer_limpo, NULL, 10);
+
+            for (int k = 0; k < tamanho_array; k++) {
+                if (numero == opcao_menu[k]) {
+                    numero_tem = true;
+                    break; 
+                }
+            }
+
+            if (numero_tem) {
+                *opcao = (unsigned int)numero;
+                fim = true;
+            } else {
+                printf("\nOpcao %d incorreta! Escolha uma opcao valida do menu.\n\n", numero);
+            }
+        }
+    } while (!fim);
 }
 
 void menu_modo(void) {
-    printf("=========================================\n");
-    printf("            MENU PRINCIPAL               \n");
-    printf("=========================================\n");
-    printf("  [ 1 ]  Troca de Bases                  \n");
-    printf("  [ 2 ]  Operacoes Bitwise               \n");
-    printf("  [ 0 ]  Sair                            \n");
-    printf("=========================================\n");
+    puts("=========================================\n"
+         "             MENU PRINCIPAL              \n"
+         "=========================================\n"
+         "  [ 1 ]  Troca de Bases                  \n"
+         "  [ 2 ]  Operacoes Bitwise               \n"
+         "  [ 3 ]  Sair                            \n"
+         "=========================================");
 }
 
 void troca_base(void) {
-    printf("=========================================\n");
-    printf("      BASES SUPORTADAS PARA ENTRADA      \n");
-    printf("=========================================\n");
-    printf("  [ 2  ]  Binario                        \n");
-    printf("  [ 8  ]  Octal                          \n");
-    printf("  [ 10 ]  Decimal                        \n");
-    printf("  [ 16 ]  Hexadecimal                    \n");
-    printf("  [ 32 ]  Base32                         \n");
-    printf("=========================================\n");
+    puts("=========================================\n"
+         "      BASES SUPORTADAS PARA ENTRADA      \n"
+         "=========================================\n"
+         "  [ 2  ]  Binario                        \n"
+         "  [ 8  ]  Octal                          \n"
+         "  [ 10 ]  Decimal                        \n"
+         "  [ 16 ]  Hexadecimal                    \n"
+         "  [ 32 ]  Base32                         \n"
+         "=========================================");
 }
 
 void op_bitwise(void) {
-    printf("=========================================\n");
-    printf("           OPERACOES BITWISE             \n");
-    printf("=========================================\n");
-    printf("  [ 1 ]  AND (&)                         \n");
-    printf("  [ 2 ]  OR (|)                          \n");
-    printf("  [ 3 ]  XOR (^)                         \n");
-    printf("  [ 4 ]  NOT (~)                         \n");
-    printf("  [ 5 ]  Shift Left (<<)                 \n");
-    printf("  [ 6 ]  Shift Right (>>)                \n");
-    printf("=========================================\n");
-}
-
-unsigned long long int ler_e_limpar_input(int base_ou_op) {
-    char buffer[250];
-    printf("Digite o valor/numero: ");
-    if(fgets(buffer, sizeof(buffer), stdin) != NULL){
-
-        
-        int i = 0, j = 0;
-        
-        while(buffer[i] != '\0') { 
-        if(isdigit((unsigned char)buffer[i])) { 
-            buffer[j++] = buffer[i]; 
-        }
-        i++;
-    }
-    buffer[j] = '\0';
-    
-    unsigned long long int resultado = strtoull(buffer, NULL, 10);
-    printf("Valor digitado: %llu\n", resultado);
-    
-    return resultado;
-    }
-    else{
-        printf("Digite uma opcao valida\n");
-        return 1; 
-    }
-}
-
-void transforma_em_binario(unsigned long long int numero) {
-    printf("[Valor em Binario]: ");
-
-    if (numero == 0) {
-        printf("0\n\n");
-        return;
-    }
-
-    int iniciou = 0;
-    int total_bits = sizeof(numero) * CHAR_BIT;
-
-    for (int bit = total_bits - 1; bit >= 0; bit--) {
-        int val = (numero >> bit) & 1;
-
-        if (val == 1) {
-            iniciou = 1;
-        }
-
-        if (iniciou) {
-            putchar(val + '0');
-        }
-    }
-    printf("\n\n");
+    puts("=========================================\n"
+         "           OPERACOES BITWISE             \n"
+         "=========================================\n"
+         "  [ 1 ]  AND (&)                         \n"
+         "  [ 2 ]  OR (|)                          \n"
+         "  [ 3 ]  XOR (^)                         \n"
+         "  [ 4 ]  NOT (~)                         \n"
+         "  [ 5 ]  Shift Left (<<)                 \n"
+         "  [ 6 ]  Shift Right (>>)                \n"
+         "=========================================");
 }
