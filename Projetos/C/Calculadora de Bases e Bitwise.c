@@ -7,8 +7,8 @@
 void menu_modo(void);
 void troca_base(void);
 void op_bitwise(void);
-
 void opcao_acessar_modo(void (*hud)(void), unsigned int* opcao, int tamanho_array, const int opcao_menu[]);
+
 
 int main(){
     const int opcoes_menu_principal[] = {0, 1, 2};
@@ -41,6 +41,42 @@ int main(){
     }
     return 0;
 }
+
+
+////// colocar so uma func pra bases ddferenetes coloacar tpo um const"0123456789ABCDEF" que acessa os valores pelo indice ja que isso é um array
+#include <stdio.h>
+#include <string.h>
+
+int main(){
+
+    int opcao = 5;
+    char buffer[100];
+    int i = 0;
+    while (opcao > 0){
+        buffer[i] = (opcao % 2) + '0';
+        opcao /= 2;
+        i++;
+    }
+    buffer[i] = '\0';
+    strrev(buffer);
+    printf("%s", buffer);
+    return 0;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 void opcao_acessar_modo(void (*hud)(void), unsigned int* opcao, int tamanho_array, const int opcao_menu[]){
     char buffer[100];
