@@ -7,7 +7,10 @@ void menu_modo(void);
 void troca_base(void);
 void op_bitwise(void);
 
-void acessarMenuFunc(void (*menu)(void), unsigned int tamanho_sizeof, const unsigned int opcaoDentroIgual[], unsigned int* opcao);
+void acessarMenuFunc(unsigned int tamanho_sizeof, const unsigned int opcaoDentroIgual[], unsigned int* opcao);
+void converterBase(unsigned int baseConversora, unsigned int numeroConverter);
+void acessaSegundaOpcao(unsigned int opcao2);
+
 
 int main(){
 
@@ -16,22 +19,28 @@ int main(){
 
     unsigned int opcao1 = 0;
     unsigned int opcao2 = 0;
+    unsigned int opcao3 = 0;
+
     
     do{
-        acessarMenuFunc(menu_modo, sizeof(menu1)/sizeof(menu1[0]), menu1, &opcao1);
+        menu_modo();
+        acessarMenuFunc(sizeof(menu1)/sizeof(menu1[0]), menu1, &opcao1);
         switch(opcao1){
             case 1:
-                puts("Opcao 1");
-                acessarMenuFunc(troca_base, sizeof(menu2_3)/ sizeof(menu2_3[0]), menu2_3, &opcao2);
+                puts("Opcao 1\n");
+                troca_base();
+                acessarMenuFunc(sizeof(menu2_3)/ sizeof(menu2_3[0]), menu2_3, &opcao2);
+                acessaSegundaOpcao(opcao2);
                 printf("DEUCERTRO\n");
                 break;
             case 2:
-                puts("Opcao 2");
-                acessarMenuFunc(op_bitwise, sizeof(menu2_3)/ sizeof(menu2_3[0]), menu2_3, &opcao2);
+                puts("Opcao 2\n");
+                op_bitwise();
+                acessarMenuFunc(sizeof(menu2_3)/ sizeof(menu2_3[0]), menu2_3, &opcao2);
                 printf("DEUCERTRO\n");
                 break;
             case 3:
-                puts("Opcao 3");
+                puts("Opcao 3\n");
                 break;
             default:
                 puts("Numero do mal\n");
@@ -47,14 +56,12 @@ int main(){
 }
 
 
-void acessarMenuFunc(void (*menu)(void), unsigned int tamanho_sizeof, const unsigned int opcaoDentroIgual[], unsigned int* opcao){
+void acessarMenuFunc(unsigned int tamanho_sizeof, const unsigned int opcaoDentroIgual[], unsigned int* opcao){
     char buffer[100];
     char buffer2[10];
     char *endptr = NULL;
     int i = 0, j = 0;
     do{
-        if(menu == NULL) continue;
-        menu();
         if(fgets(buffer, sizeof(buffer), stdin) == NULL) continue;
         buffer[strcspn(buffer, "\n")] = '\0';
         if(buffer[0] == '\0') continue;
@@ -76,8 +83,23 @@ void acessarMenuFunc(void (*menu)(void), unsigned int tamanho_sizeof, const unsi
     }while(1);
 }
 
+void acessaSegundaOpcao(unsigned int opcao2){
 
-void menu_modo(void) {
+    switch (opcao2){
+        case 1: break;
+        case 2: break;
+        case 3: break;
+        case 4: break;
+        case 5: break;
+        case 6: break;
+        default:
+            break;
+    } 
+}
+
+
+
+void menu_modo(void){
     puts("=========================================\n"
          "             MENU PRINCIPAL              \n"
          "=========================================\n"
@@ -86,7 +108,7 @@ void menu_modo(void) {
          "  [ 3 ]  Sair                            \n"
          "=========================================");
 }
-void troca_base(void) {
+void troca_base(void){
     puts("=========================================\n"
          "      BASES SUPORTADAS PARA ENTRADA      \n"
          "=========================================\n"
@@ -98,7 +120,7 @@ void troca_base(void) {
          "  [ 6 ]  Criar Base                     \n"
          "=========================================");
 }
-void op_bitwise(void) {
+void op_bitwise(void){
     puts("=========================================\n"
          "           OPERACOES BITWISE             \n"
          "=========================================\n"
