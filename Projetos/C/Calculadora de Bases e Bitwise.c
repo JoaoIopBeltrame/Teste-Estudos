@@ -1,137 +1,81 @@
 #include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
 void menu_modo(void);
 void troca_base(void);
 void op_bitwise(void);
-void opcao_acessar_modo(void (*hud)(void), unsigned int* opcao, int tamanho_array, const int opcao_menu[]);
 
+void acessarMenuFunc(void (*menu)(void), unsigned int tamanho_sizeof, const unsigned int opcaoDentroIgual[], unsigned int* opcao);
 
 int main(){
-    const int opcoes_menu_principal[] = {0, 1, 2};
-    const int opcoes_troca_base[] = {2, 8, 10, 16, 32};
-    const int opcoes_bitwise[] = {1, 2, 3, 4, 5, 6};
 
-    unsigned int opcao_principal = 0;
-    unsigned int opcao_sub = 0;
+    const unsigned int menu1[] = {1, 2, 3};
+    const unsigned int menu2_3[] = {1, 2, 3, 4, 5, 6};
 
-    opcao_acessar_modo(menu_modo, &opcao_principal, sizeof(opcoes_menu_principal) / sizeof(opcoes_menu_principal[0]), opcoes_menu_principal);
+    unsigned int opcao1 = 0;
+    unsigned int opcao2 = 0;
+    
+    do{
+        acessarMenuFunc(menu_modo, sizeof(menu1)/sizeof(menu1[0]), menu1, &opcao1);
+        switch(opcao1){
+            case 1:
+                puts("Opcao 1");
+                acessarMenuFunc(troca_base, sizeof(menu2_3)/ sizeof(menu2_3[0]), menu2_3, &opcao2);
+                printf("DEUCERTRO\n");
+                break;
+            case 2:
+                puts("Opcao 2");
+                acessarMenuFunc(op_bitwise, sizeof(menu2_3)/ sizeof(menu2_3[0]), menu2_3, &opcao2);
+                printf("DEUCERTRO\n");
+                break;
+            case 3:
+                puts("Opcao 3");
+                break;
+            default:
+                puts("Numero do mal\n");
+                continue;
+        }
 
-    switch (opcao_principal) {
-        case 1:
-            opcao_acessar_modo(troca_base, &opcao_sub, sizeof(opcoes_troca_base) / sizeof(opcoes_troca_base[0]), opcoes_troca_base);
-            printf("Voce selecionou a base: %u\n", opcao_sub);
-            break;
+    }while(1);
 
-        case 2:
-            opcao_acessar_modo(op_bitwise, &opcao_sub, sizeof(opcoes_bitwise) / sizeof(opcoes_bitwise[0]), opcoes_bitwise);
-            printf("Voce selecionou a operacao bitwise: %u\n", opcao_sub);
-            break;
 
-        case 0:
-            printf("Saindo do programa...\n");
-            break;
 
-        default:
-            printf("Opcao invalida.\n");
-            break;
-    }
+
     return 0;
 }
 
 
-////// colocar so uma func pra bases ddferenetes coloacar tpo um const"0123456789ABCDEF" que acessa os valores pelo indice ja que isso é um array
-#include <stdio.h>
-#include <string.h>
-
-int main(){
-
-    int opcao = 5;
+void acessarMenuFunc(void (*menu)(void), unsigned int tamanho_sizeof, const unsigned int opcaoDentroIgual[], unsigned int* opcao){
     char buffer[100];
-    int i = 0;
-    while (opcao > 0){
-        buffer[i] = (opcao % 2) + '0';
-        opcao /= 2;
-        i++;
-    }
-    buffer[i] = '\0';
-    strrev(buffer);
-    printf("%s", buffer);
-    return 0;
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-void opcao_acessar_modo(void (*hud)(void), unsigned int* opcao, int tamanho_array, const int opcao_menu[]){
-    char buffer[100];
-    char buffer_limpo[100];
-    int numero;
-    bool numero_tem;
-    bool fim = false;
-
-    do {
-        if (hud != NULL) {
-            hud();
-        }
-        printf("Escolha uma opcao: ");
-
-        numero_tem = false;
-        unsigned int j = 0;
-
-        if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
-            buffer[strcspn(buffer, "\n")] = '\0';
-
-            if (buffer[0] == '\0') {
-                printf("\nEntrada vazia! Tente novamente.\n\n");
-                continue;
-            }
-
-            for (unsigned int i = 0; buffer[i] != '\0'; i++) {
-                if (isdigit((unsigned char)buffer[i])) {
-                    buffer_limpo[j++] = buffer[i];
+    char buffer2[10];
+    char *endptr = NULL;
+    int i = 0, j = 0;
+    do{
+        if(menu == NULL) continue;
+        menu();
+        if(fgets(buffer, sizeof(buffer), stdin) == NULL) continue;
+        buffer[strcspn(buffer, "\n")] = '\0';
+        if(buffer[0] == '\0') continue;
+        
+        for(int j = 0; j < tamanho_sizeof; j++){
+            for(int i = 0; buffer[i] != '\0'; i++){
+                if(isdigit(buffer[i]) && (buffer[i] - '0') == opcaoDentroIgual[j]){
+                    buffer2[0] = buffer[i];
+                    break;
                 }
             }
-            buffer_limpo[j] = '\0';
-
-            if (buffer_limpo[0] == '\0') {
-                printf("\nNenhum digito valido encontrado! Tente novamente.\n\n");
-                continue;
-            }
-
-            numero = (int)strtol(buffer_limpo, NULL, 10);
-
-            for (int k = 0; k < tamanho_array; k++) {
-                if (numero == opcao_menu[k]) {
-                    numero_tem = true;
-                    break; 
-                }
-            }
-
-            if (numero_tem) {
-                *opcao = (unsigned int)numero;
-                fim = true;
-            } else {
-                printf("\nOpcao %d incorreta! Escolha uma opcao valida do menu.\n\n", numero);
-            }
         }
-    } while (!fim);
+        buffer2[1] = '\0';
+        
+        long valor = strtol(buffer2, &endptr, 10);
+        *opcao = (int)valor;
+        break;
+
+    }while(1);
 }
+
 
 void menu_modo(void) {
     puts("=========================================\n"
@@ -142,19 +86,18 @@ void menu_modo(void) {
          "  [ 3 ]  Sair                            \n"
          "=========================================");
 }
-
 void troca_base(void) {
     puts("=========================================\n"
          "      BASES SUPORTADAS PARA ENTRADA      \n"
          "=========================================\n"
-         "  [ 2  ]  Binario                        \n"
-         "  [ 8  ]  Octal                          \n"
-         "  [ 10 ]  Decimal                        \n"
-         "  [ 16 ]  Hexadecimal                    \n"
-         "  [ 32 ]  Base32                         \n"
+         "  [ 1 ]  Binario                        \n"
+         "  [ 2 ]  Octal                          \n"
+         "  [ 3 ]  Decimal                        \n"
+         "  [ 4 ]  Hexadecimal                    \n"
+         "  [ 5 ]  Base32                         \n"
+         "  [ 6 ]  Criar Base                     \n"
          "=========================================");
 }
-
 void op_bitwise(void) {
     puts("=========================================\n"
          "           OPERACOES BITWISE             \n"
