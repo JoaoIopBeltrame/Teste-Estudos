@@ -6,8 +6,8 @@ Três versões do mesmo problema, cada uma com uma abordagem diferente.
 
 | Pasta | Abordagem | Status |
 |---|---|---|
-| [`loops/`](./loops) | Lógica manual com `for`| quase pronta |
-| [`numpy/`](./numpy) | Usando NumPy (`np.linalg.det()` etc) | planejada |
+| [`loops/`](./loops) | Lógica manual com `for`| pronta |
+| [`numpy/`](./numpy) | Usando NumPy (`np.linalg.det()` etc) | pronta |
 | [`tkinter/`](./tkinter) | Interface gráfica (Tk) sobre uma das lógicas acima | planejada |
 
 ## Por que três versões
